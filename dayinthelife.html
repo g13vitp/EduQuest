@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day in the Life – Sustainability Game</title>
+
+<style>
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#e8f5e9;
+    font-family:Arial, sans-serif;
+  }
+
+  .game{
+    background:#fff;
+    width:360px;
+    padding:25px;
+    text-align:center;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  h1{
+    margin-bottom:15px;
+    color:#2e7d32;
+  }
+
+  button{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:none;
+    border-radius:6px;
+    background:#2e7d32;
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  button:hover{
+    background:#1b5e20;
+  }
+
+  .score{
+    margin-top:15px;
+    font-weight:bold;
+  }
+</style>
+<script src="common.js"></script>
+</head>
+
+<body>
+
+<div class="game">
+  <h1>Day in the Life 🌱</h1>
+  <p id="question"></p>
+  <div id="options"></div>
+  <p class="score">Impact Score: <span id="score">0</span></p>
+</div>
+
+<script>
+/* ===== SAFETY FALLBACKS ===== */
+if (typeof getCurrentUser !== "function") {
+  function getCurrentUser() {
+    return { email: "demo@user.com", level: "college" };
+  }
+}
+
+if (typeof addUserScore !== "function") {
+  function addUserScore(email, game, score, type, total) {
+    console.log("Score saved:", email, game, score);
+  }
+}
+
+if (typeof initializeStorage !== "function") {
+  function initializeStorage() {
+    console.log("Storage initialized");
+  }
+}
+const scenes = [
+  {
+    question: "How do you travel to college?",
+    options: [
+      { text: "Bicycle", impact: 5 },
+      { text: "Public Transport", impact: 10 },
+      { text: "Car", impact: 2 }
+    ]
+  },
+  {
+    question: "What do you eat for lunch?",
+    options: [
+      { text: "Home cooked meal", impact: 10 },
+      { text: "Vegetarian meal", impact: 5 },
+      { text: "Fast food", impact: 2 }
+    ]
+  },
+  {
+    question: "How do you spend the evening?",
+    options: [
+      { text: "Studying / Reading", impact: 5 },
+      { text: "Outdoor sports", impact: 10 },
+      { text: "Streaming videos", impact: 2 }
+    ]
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const scoreEl = document.getElementById("score");
+
+function loadScene(){
+  if(current >= scenes.length){
+    questionEl.innerHTML =
+      "Your day is complete 🌍<br><br><b>Total Impact Score: " + score + "</b>";
+    optionsEl.innerHTML = "";
+    return;
+  }
+
+  questionEl.innerText = scenes[current].question;
+  optionsEl.innerHTML = "";
+
+  scenes[current].options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.innerText = opt.text;
+    btn.onclick = () => {
+      score += opt.impact;
+      scoreEl.innerText = score;
+      current++;
+      loadScene();
+    };
+    optionsEl.appendChild(btn);
+  });
+}
+
+loadScene();
+</script>
+
+</body>
+</html>
